@@ -7,6 +7,7 @@ import { EnvironmentButton } from '../components/EnviromentButton';
 import api from '../services/api'
 import { PlantCardPrimary } from './../components/PlantCardPrimary';
 import {Load} from '../components/Load';
+import { useNavigation } from '@react-navigation/native';
 interface EnvironmentProps{
     key: string;
     title: string;
@@ -34,7 +35,7 @@ export function PlantSelect(){
     const [loading, setLoading] = useState(true);
     const [page, setPage] = useState(1);
     const [loadingMore, setLoadingMore] = useState(true);
-    const [loadedAll, setLoadedAll] = useState(false);
+    const navigation = useNavigation();
 
     function handleEnviromentSelected(enviroment: string){
         setenviromentSelected(enviroment);
@@ -69,6 +70,9 @@ export function PlantSelect(){
         fetchPlants();
     }
 
+    function handlePlantSelect(plants: PlantProps){
+        navigation.navigate('PlantSave', {plants});
+    }
     useEffect(() => {
         async function fetchEnviroment(){
             const {data} = await api.get('plants_environments?_sort=title&order=asc');
@@ -98,7 +102,8 @@ export function PlantSelect(){
                 </Text>
             </View>
             <View>
-                <FlatList data={enviroment} 
+                <FlatList data={enviroment}
+                keyExtractor={(item) => String(item.key)}
                 renderItem={({item}) => (
                     <EnvironmentButton  
                         title={item.title}
@@ -112,8 +117,11 @@ export function PlantSelect(){
             </View>
             <View style={styles.plants}>
                     <FlatList data={filteredplants}
+                    keyExtractor={(item) => String(item.id)}
                     renderItem={({item}) => (
-                        <PlantCardPrimary data={item}/>
+                        <PlantCardPrimary 
+                        data={item}
+                       onPress={() => handlePlantSelect(item)}/>
                     )} 
                     showsVerticalScrollIndicator={false}
                     numColumns={2}

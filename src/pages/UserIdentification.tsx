@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
-import {StyleSheet, SafeAreaView,View, Text, TextInput, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard} from 'react-native';
+import {StyleSheet, SafeAreaView,View, Text, TextInput, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Alert} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import colors from '../styles/colors';
 import fonts from '../styles/fonts';
 import {Button} from '../components/Button'
@@ -23,7 +24,10 @@ export function UserIdentification(){
         setName(value);
     }
 
-    function handleSubmit(){
+    async function handleSubmit(){ //tem q ser async pq tem o storage
+            if(!name)
+                return Alert.alert("Me diga como chamar você 😢")
+            await AsyncStorage.setItem('@plantmanager:user', name); //o @ é um padrao para deixar mais organizado
             navigation.navigate('Confirmation');
     }
 
